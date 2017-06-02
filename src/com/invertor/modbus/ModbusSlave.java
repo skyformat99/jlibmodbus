@@ -1,7 +1,7 @@
 package com.invertor.modbus;
 
-import com.invertor.modbus.data.DataHolder;
-import com.invertor.modbus.data.DataHolderBuilder;
+import com.invertor.modbus.data.MemoryMap;
+import com.invertor.modbus.data.MemoryMapBuilder;
 import com.invertor.modbus.exception.ModbusIOException;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 abstract public class ModbusSlave {
 
     private int serverAddress = 1;
-    private DataHolder dataHolder = new DataHolder();
+    private MemoryMap memoryMap = new MemoryMap();
     private AtomicBoolean listening = new AtomicBoolean(false);
     /**
      * a timeout for single connection handler. if master makes a new connection for every data request,
@@ -80,16 +80,16 @@ abstract public class ModbusSlave {
     }
 
     /*Getters & Setters*/
-    public DataHolder getDataHolder() {
-        return dataHolder;
+    public MemoryMap getMemoryMap() {
+        return memoryMap;
     }
 
-    public void setDataHolder(DataHolderBuilder builder) {
+    public void setMemoryMap(MemoryMapBuilder builder) {
         setDataHolder(builder.build());
     }
 
-    public void setDataHolder(DataHolder dataHolder) {
-        this.dataHolder = dataHolder;
+    public void setDataHolder(MemoryMap memoryMap) {
+        this.memoryMap = memoryMap;
     }
 
     public int getServerAddress() {

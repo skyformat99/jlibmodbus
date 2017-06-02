@@ -3,8 +3,8 @@ package com.invertor.examples.modbus;
 import com.invertor.modbus.Modbus;
 import com.invertor.modbus.ModbusSlave;
 import com.invertor.modbus.ModbusSlaveFactory;
-import com.invertor.modbus.data.DataHolder;
-import com.invertor.modbus.data.SimpleDataHolderBuilder;
+import com.invertor.modbus.data.MemoryMap;
+import com.invertor.modbus.data.SimpleMemoryMapBuilder;
 import com.invertor.modbus.exception.IllegalDataAddressException;
 import com.invertor.modbus.exception.IllegalDataValueException;
 import com.invertor.modbus.exception.ModbusIOException;
@@ -187,15 +187,15 @@ public class ModbusSlaveTest {
             }
 
             slave.setServerAddress(1);
-            slave.setDataHolder(new SimpleDataHolderBuilder(1000));
+            slave.setMemoryMap(new SimpleMemoryMapBuilder(1000));
 
             try {
-                DataHolder dataHolder = slave.getDataHolder();
-                dataHolder.getCoils().set(1, true);
-                dataHolder.getCoils().set(3, true);
-                dataHolder.getDiscreteInputs().setRange(0, new boolean[]{false, true, true, false, true});
-                dataHolder.getInputRegisters().set(5, 69);
-                dataHolder.getHoldingRegisters().setRange(0, new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 55});
+                MemoryMap memoryMap = slave.getMemoryMap();
+                memoryMap.getCoils().set(1, true);
+                memoryMap.getCoils().set(3, true);
+                memoryMap.getDiscreteInputs().setRange(0, new boolean[]{false, true, true, false, true});
+                memoryMap.getInputRegisters().set(5, 69);
+                memoryMap.getHoldingRegisters().setRange(0, new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 55});
             } catch (IllegalDataAddressException e) {
                 e.printStackTrace();
             } catch (IllegalDataValueException e) {
@@ -208,10 +208,10 @@ public class ModbusSlaveTest {
                     Thread.sleep(1000);
                     System.out.println();
                     System.out.println("Slave output");
-                    printRegisters("Holding registers", slave.getDataHolder().getHoldingRegisters().getRange(0, 10));
-                    printRegisters("Input registers", slave.getDataHolder().getInputRegisters().getRange(0, 10));
-                    printBits("Coils", slave.getDataHolder().getCoils().getRange(0, 10));
-                    printBits("Discrete inputs", slave.getDataHolder().getDiscreteInputs().getRange(0, 10));
+                    printRegisters("Holding registers", slave.getMemoryMap().getHoldingRegisters().getRange(0, 10));
+                    printRegisters("Input registers", slave.getMemoryMap().getInputRegisters().getRange(0, 10));
+                    printBits("Coils", slave.getMemoryMap().getCoils().getRange(0, 10));
+                    printBits("Discrete inputs", slave.getMemoryMap().getDiscreteInputs().getRange(0, 10));
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();

@@ -3,8 +3,8 @@ package com.invertor.examples.modbus;
 import com.invertor.modbus.Modbus;
 import com.invertor.modbus.ModbusSlave;
 import com.invertor.modbus.ModbusSlaveFactory;
-import com.invertor.modbus.data.DataHolder;
 import com.invertor.modbus.data.HoldingRegisters;
+import com.invertor.modbus.data.MemoryMap;
 import com.invertor.modbus.data.SimpleHoldingRegisters;
 import com.invertor.modbus.exception.IllegalDataAddressException;
 import com.invertor.modbus.exception.IllegalDataValueException;
@@ -61,7 +61,7 @@ public class SimpleSlaveTCP {
             slave = ModbusSlaveFactory.createModbusSlaveTCP(tcpParameters);
             Modbus.setLogLevel(Modbus.LogLevel.LEVEL_DEBUG);
 
-            MyOwnDataHolder dh = new MyOwnDataHolder();
+            MyOwnMemoryMap dh = new MyOwnMemoryMap();
             dh.addEventListener(new ModbusEventListener() {
                 @Override
                 public void onWriteToSingleCoil(int address, boolean value) {
@@ -87,7 +87,7 @@ public class SimpleSlaveTCP {
             slave.setDataHolder(dh);
             HoldingRegisters hr = new SimpleHoldingRegisters(10);
             hr.set(0, 12345);
-            slave.getDataHolder().setHoldingRegisters(hr);
+            slave.getMemoryMap().setHoldingRegisters(hr);
             slave.setServerAddress(1);
             /*
              * using master-branch it should be #slave.open();
@@ -133,11 +133,11 @@ public class SimpleSlaveTCP {
         void onWriteToMultipleHoldingRegisters(int address, int quantity, int[] values);
     }
 
-    public static class MyOwnDataHolder extends DataHolder {
+    public static class MyOwnMemoryMap extends MemoryMap {
 
         final List<ModbusEventListener> modbusEventListenerList = new ArrayList<ModbusEventListener>();
 
-        public MyOwnDataHolder() {
+        public MyOwnMemoryMap() {
             // you can place the initialization code here
             /*
             something like that:

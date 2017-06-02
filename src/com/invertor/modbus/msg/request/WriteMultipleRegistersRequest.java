@@ -1,7 +1,7 @@
 package com.invertor.modbus.msg.request;
 
 import com.invertor.modbus.Modbus;
-import com.invertor.modbus.data.DataHolder;
+import com.invertor.modbus.data.MemoryMap;
 import com.invertor.modbus.exception.ModbusNumberException;
 import com.invertor.modbus.exception.ModbusProtocolException;
 import com.invertor.modbus.msg.base.AbstractWriteMultipleRequest;
@@ -55,10 +55,10 @@ final public class WriteMultipleRegistersRequest extends AbstractWriteMultipleRe
     }
 
     @Override
-    public ModbusResponse process(DataHolder dataHolder) throws ModbusNumberException {
+    public ModbusResponse process(MemoryMap memoryMap) throws ModbusNumberException {
         WriteMultipleRegistersResponse response = new WriteMultipleRegistersResponse(getServerAddress(), getStartAddress(), getQuantity());
         try {
-            dataHolder.writeHoldingRegisterRange(getStartAddress(), getRegisters());
+            memoryMap.writeHoldingRegisterRange(getStartAddress(), getRegisters());
         } catch (ModbusProtocolException e) {
             response.setException();
             response.setModbusExceptionCode(e.getException().getValue());

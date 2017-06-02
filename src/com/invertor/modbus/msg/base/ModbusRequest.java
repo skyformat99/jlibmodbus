@@ -1,6 +1,6 @@
 package com.invertor.modbus.msg.base;
 
-import com.invertor.modbus.data.DataHolder;
+import com.invertor.modbus.data.MemoryMap;
 import com.invertor.modbus.exception.ModbusNumberException;
 import com.invertor.modbus.net.stream.base.ModbusOutputStream;
 
@@ -48,7 +48,7 @@ abstract public class ModbusRequest extends ModbusMessage {
 
     abstract public int requestSize();
 
-    abstract public ModbusResponse process(DataHolder dataHolder) throws ModbusNumberException;
+    abstract public ModbusResponse process(MemoryMap memoryMap) throws ModbusNumberException;
 
     abstract protected boolean validateResponseImpl(ModbusResponse response);
 

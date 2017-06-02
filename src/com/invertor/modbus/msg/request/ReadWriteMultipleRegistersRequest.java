@@ -1,6 +1,6 @@
 package com.invertor.modbus.msg.request;
 
-import com.invertor.modbus.data.DataHolder;
+import com.invertor.modbus.data.MemoryMap;
 import com.invertor.modbus.exception.ModbusNumberException;
 import com.invertor.modbus.exception.ModbusProtocolException;
 import com.invertor.modbus.msg.base.ModbusRequest;
@@ -63,11 +63,11 @@ public class ReadWriteMultipleRegistersRequest extends ModbusRequest {
     }
 
     @Override
-    public ModbusResponse process(DataHolder dataHolder) throws ModbusNumberException {
+    public ModbusResponse process(MemoryMap memoryMap) throws ModbusNumberException {
         ReadWriteMultipleRegistersResponse response = new ReadWriteMultipleRegistersResponse(getServerAddress());
         try {
-            dataHolder.writeHoldingRegisterRange(writer.getStartAddress(), writer.getRegisters());
-            int[] range = dataHolder.readHoldingRegisterRange(reader.getStartAddress(), reader.getQuantity());
+            memoryMap.writeHoldingRegisterRange(writer.getStartAddress(), writer.getRegisters());
+            int[] range = memoryMap.readHoldingRegisterRange(reader.getStartAddress(), reader.getQuantity());
             response.setBuffer(range);
         } catch (ModbusProtocolException e) {
             response.setException();

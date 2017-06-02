@@ -21,19 +21,19 @@ package com.invertor.modbus.data;
  * Authors: Vladislav Y. Kochedykov, software engineer.
  * email: vladislav.kochedykov@gmail.com
  */
-abstract public class DataHolderBuilder {
-    protected DataHolder dataHolder;
+abstract public class MemoryMapBuilder {
+    protected MemoryMap memoryMap;
 
-    protected DataHolderBuilder() {
+    protected MemoryMapBuilder() {
         createNewDataHolder();
     }
 
-    public DataHolder getDataHolder() {
-        return dataHolder;
+    public MemoryMap getMemoryMap() {
+        return memoryMap;
     }
 
     final public void createNewDataHolder() {
-        dataHolder = new DataHolder();
+        memoryMap = new MemoryMap();
     }
 
     public abstract void buildCoils();
@@ -52,7 +52,7 @@ abstract public class DataHolderBuilder {
 
     public abstract void readDeviceIdentificationInterface();
 
-    final public DataHolder build() {
+    final public MemoryMap build() {
         createNewDataHolder();
         buildCoils();
         buildDiscreteInputs();
@@ -62,6 +62,6 @@ abstract public class DataHolderBuilder {
         buildExceptionStatus();
         buildFifoQueue();
         readDeviceIdentificationInterface();
-        return getDataHolder();
+        return getMemoryMap();
     }
 }

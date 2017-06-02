@@ -1,7 +1,7 @@
 package com.invertor.modbus.msg.request;
 
 import com.invertor.modbus.data.CommStatus;
-import com.invertor.modbus.data.DataHolder;
+import com.invertor.modbus.data.MemoryMap;
 import com.invertor.modbus.exception.ModbusNumberException;
 import com.invertor.modbus.msg.base.ModbusRequest;
 import com.invertor.modbus.msg.base.ModbusResponse;
@@ -50,9 +50,9 @@ final public class GetCommEventLogRequest extends ModbusRequest {
     }
 
     @Override
-    public ModbusResponse process(DataHolder dataHolder) throws ModbusNumberException {
+    public ModbusResponse process(MemoryMap memoryMap) throws ModbusNumberException {
         GetCommEventLogResponse response = new GetCommEventLogResponse(getServerAddress());
-        CommStatus commStatus = dataHolder.getCommStatus();
+        CommStatus commStatus = memoryMap.getCommStatus();
         response.setEventCount(commStatus.getEventCount());
         response.setStatus(commStatus.getCommStatus());
         response.setMessageCount(commStatus.getMessageCount());

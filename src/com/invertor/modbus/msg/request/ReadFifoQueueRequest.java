@@ -1,6 +1,6 @@
 package com.invertor.modbus.msg.request;
 
-import com.invertor.modbus.data.DataHolder;
+import com.invertor.modbus.data.MemoryMap;
 import com.invertor.modbus.exception.ModbusNumberException;
 import com.invertor.modbus.exception.ModbusProtocolException;
 import com.invertor.modbus.msg.base.AbstractDataRequest;
@@ -59,10 +59,10 @@ public class ReadFifoQueueRequest extends AbstractDataRequest {
     }
 
     @Override
-    public ModbusResponse process(DataHolder dataHolder) throws ModbusNumberException {
+    public ModbusResponse process(MemoryMap memoryMap) throws ModbusNumberException {
         ReadFifoQueueResponse response = new ReadFifoQueueResponse(getServerAddress());
         try {
-            int[] r = dataHolder.readFifoQueue(getStartAddress());
+            int[] r = memoryMap.readFifoQueue(getStartAddress());
             response.setFifoValueRegister(r);
         } catch (ModbusProtocolException e) {
             response.setException();

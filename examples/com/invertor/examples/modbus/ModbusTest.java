@@ -1,9 +1,9 @@
 package com.invertor.examples.modbus;
 
 import com.invertor.modbus.*;
-import com.invertor.modbus.data.DataHolder;
 import com.invertor.modbus.data.FifoQueue;
-import com.invertor.modbus.data.SimpleDataHolderBuilder;
+import com.invertor.modbus.data.MemoryMap;
+import com.invertor.modbus.data.SimpleMemoryMapBuilder;
 import com.invertor.modbus.data.comm.ModbusCommEventSend;
 import com.invertor.modbus.data.mei.ReadDeviceIdentificationInterface;
 import com.invertor.modbus.exception.IllegalDataAddressException;
@@ -230,25 +230,25 @@ public class ModbusTest implements Runnable {
             test.master.setResponseTimeout(1000);
 
             test.slave.setServerAddress(1);
-            test.slave.setDataHolder(new SimpleDataHolderBuilder(1000));
+            test.slave.setMemoryMap(new SimpleMemoryMapBuilder(1000));
             Modbus.setLogLevel(Modbus.LogLevel.LEVEL_RELEASE);
 
             try {
-                DataHolder dataHolder = test.slave.getDataHolder();
-                dataHolder.getCoils().set(1, true);
-                dataHolder.getCoils().set(3, true);
-                dataHolder.getDiscreteInputs().setRange(0, new boolean[]{false, true, true, false, true});
-                dataHolder.getInputRegisters().setRange(0, new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-                dataHolder.getInputRegisters().set(11, 69);
-                dataHolder.getHoldingRegisters().setRange(0, new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-                dataHolder.getSlaveId().set("slave implementation = jlibmodbus".getBytes(Charset.forName("UTF-8")));
-                dataHolder.getExceptionStatus().set(123);
-                dataHolder.getCommStatus().addEvent(ModbusCommEventSend.createExceptionSentRead());
-                ReadDeviceIdentificationInterface rii = dataHolder.getReadDeviceIdentificationInterface();
+                MemoryMap memoryMap = test.slave.getMemoryMap();
+                memoryMap.getCoils().set(1, true);
+                memoryMap.getCoils().set(3, true);
+                memoryMap.getDiscreteInputs().setRange(0, new boolean[]{false, true, true, false, true});
+                memoryMap.getInputRegisters().setRange(0, new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+                memoryMap.getInputRegisters().set(11, 69);
+                memoryMap.getHoldingRegisters().setRange(0, new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+                memoryMap.getSlaveId().set("slave implementation = jlibmodbus".getBytes(Charset.forName("UTF-8")));
+                memoryMap.getExceptionStatus().set(123);
+                memoryMap.getCommStatus().addEvent(ModbusCommEventSend.createExceptionSentRead());
+                ReadDeviceIdentificationInterface rii = memoryMap.getReadDeviceIdentificationInterface();
                 rii.setVendorName("Vendor name=\"JSC Invertor\"");
                 rii.setProductCode("Product code=\"3245234658\"");
                 rii.setMajorMinorRevision("Revision=\"v1.0\"");
-                FifoQueue fifo = dataHolder.getFifoQueue(0);
+                FifoQueue fifo = memoryMap.getFifoQueue(0);
                 for (int i = 0; i < 35; i++) {
                     if (fifo.size() == Modbus.MAX_FIFO_COUNT)
                         fifo.poll();
@@ -322,10 +322,10 @@ public class ModbusTest implements Runnable {
             try {
                 Thread.sleep(10);
                 System.out.println("Slave output");
-                printRegisters("Holding registers", slave.getDataHolder().getHoldingRegisters().getRange(0, 16));
-                printRegisters("Input registers", slave.getDataHolder().getInputRegisters().getRange(0, 16));
-                printBits("Coils", slave.getDataHolder().getCoils().getRange(0, 16));
-                printBits("Discrete inputs", slave.getDataHolder().getDiscreteInputs().getRange(0, 16));
+                printRegisters("Holding registers", slave.getMemoryMap().getHoldingRegisters().getRange(0, 16));
+                printRegisters("Input registers", slave.getMemoryMap().getInputRegisters().getRange(0, 16));
+                printBits("Coils", slave.getMemoryMap().getCoils().getRange(0, 16));
+                printBits("Discrete inputs", slave.getMemoryMap().getDiscreteInputs().getRange(0, 16));
                 System.out.println();
                 System.out.println("Master output");
                 printRegisters("Holding registers", master.readHoldingRegisters(1, 0, 16));

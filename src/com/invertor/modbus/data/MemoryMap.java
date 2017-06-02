@@ -35,7 +35,7 @@ import java.util.TreeMap;
 /*
 facade
  */
-public class DataHolder {
+public class MemoryMap {
 
     final private CommStatus commStatus = new CommStatus();
     final private Map<Integer, FifoQueue> fifoMap = new TreeMap<Integer, FifoQueue>();

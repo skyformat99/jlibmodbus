@@ -1,6 +1,6 @@
 package com.invertor.modbus.msg.request;
 
-import com.invertor.modbus.data.DataHolder;
+import com.invertor.modbus.data.MemoryMap;
 import com.invertor.modbus.exception.ModbusNumberException;
 import com.invertor.modbus.msg.base.ModbusRequest;
 import com.invertor.modbus.msg.base.ModbusResponse;
@@ -51,7 +51,7 @@ public class IllegalFunctionRequest extends ModbusRequest {
     }
 
     @Override
-    public ModbusResponse process(DataHolder dataHolder) throws ModbusNumberException {
+    public ModbusResponse process(MemoryMap memoryMap) throws ModbusNumberException {
         return new IllegalFunctionResponse(getServerAddress(), getFunction());
     }
 

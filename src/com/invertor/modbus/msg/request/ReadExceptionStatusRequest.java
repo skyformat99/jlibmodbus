@@ -1,6 +1,6 @@
 package com.invertor.modbus.msg.request;
 
-import com.invertor.modbus.data.DataHolder;
+import com.invertor.modbus.data.MemoryMap;
 import com.invertor.modbus.exception.ModbusNumberException;
 import com.invertor.modbus.exception.ModbusProtocolException;
 import com.invertor.modbus.msg.base.ModbusRequest;
@@ -50,10 +50,10 @@ final public class ReadExceptionStatusRequest extends ModbusRequest {
     }
 
     @Override
-    public ModbusResponse process(DataHolder dataHolder) throws ModbusNumberException {
+    public ModbusResponse process(MemoryMap memoryMap) throws ModbusNumberException {
         ReadExceptionStatusResponse response = new ReadExceptionStatusResponse(getServerAddress());
         try {
-            int exceptionStatus = dataHolder.readExceptionStatus();
+            int exceptionStatus = memoryMap.readExceptionStatus();
             response.setExceptionStatus(exceptionStatus);
         } catch (ModbusProtocolException e) {
             response.setException();

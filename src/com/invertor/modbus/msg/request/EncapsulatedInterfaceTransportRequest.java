@@ -1,6 +1,6 @@
 package com.invertor.modbus.msg.request;
 
-import com.invertor.modbus.data.DataHolder;
+import com.invertor.modbus.data.MemoryMap;
 import com.invertor.modbus.exception.ModbusNumberException;
 import com.invertor.modbus.exception.ModbusProtocolException;
 import com.invertor.modbus.msg.base.ModbusRequest;
@@ -69,11 +69,11 @@ public class EncapsulatedInterfaceTransportRequest extends ModbusRequest {
     }
 
     @Override
-    public ModbusResponse process(DataHolder dataHolder) throws ModbusNumberException {
+    public ModbusResponse process(MemoryMap memoryMap) throws ModbusNumberException {
         EncapsulatedInterfaceTransportResponse response = new EncapsulatedInterfaceTransportResponse(getServerAddress());
         response.setMei(mei);
         try {
-            response.getMei().process(dataHolder);
+            response.getMei().process(memoryMap);
         } catch (ModbusProtocolException e) {
             response.setException();
             response.setModbusExceptionCode(e.getException().getValue());

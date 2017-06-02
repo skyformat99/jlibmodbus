@@ -1,7 +1,7 @@
 package com.invertor.modbus.msg.base.mei;
 
 import com.invertor.modbus.Modbus;
-import com.invertor.modbus.data.DataHolder;
+import com.invertor.modbus.data.MemoryMap;
 import com.invertor.modbus.data.mei.ReadDeviceIdentificationInterface;
 import com.invertor.modbus.data.mei.ReadDeviceIdentificationInterface.DataObject;
 import com.invertor.modbus.exception.IllegalDataAddressException;
@@ -122,8 +122,8 @@ public class MEIReadDeviceIdentification implements ModbusEncapsulatedInterface 
     }
 
     @Override
-    public void process(DataHolder dataHolder) throws IllegalDataAddressException {
-        ReadDeviceIdentificationInterface deviceId = dataHolder.getReadDeviceIdentificationInterface();
+    public void process(MemoryMap memoryMap) throws IllegalDataAddressException {
+        ReadDeviceIdentificationInterface deviceId = memoryMap.getReadDeviceIdentificationInterface();
         if (deviceId.getExtended().length != 0) {
             setConformityLevel(ConformityLevel.EXTENDED_STREAM_AND_INDIVIDUAL);
         } else if (deviceId.getRegular().length != 0) {

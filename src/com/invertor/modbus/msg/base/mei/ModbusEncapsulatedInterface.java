@@ -1,6 +1,6 @@
 package com.invertor.modbus.msg.base.mei;
 
-import com.invertor.modbus.data.DataHolder;
+import com.invertor.modbus.data.MemoryMap;
 import com.invertor.modbus.exception.IllegalDataAddressException;
 import com.invertor.modbus.exception.ModbusNumberException;
 import com.invertor.modbus.net.stream.base.ModbusInputStream;
@@ -45,5 +45,5 @@ public interface ModbusEncapsulatedInterface {
 
     int getResponseSize();
 
-    void process(DataHolder dataHolder) throws IllegalDataAddressException;
+    void process(MemoryMap memoryMap) throws IllegalDataAddressException;
 }

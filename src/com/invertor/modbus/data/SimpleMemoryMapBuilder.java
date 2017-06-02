@@ -24,18 +24,18 @@ import com.invertor.modbus.exception.IllegalDataAddressException;
  * Authors: Vladislav Y. Kochedykov, software engineer.
  * email: vladislav.kochedykov@gmail.com
  */
-public class SimpleDataHolderBuilder extends DataHolderBuilder {
+public class SimpleMemoryMapBuilder extends MemoryMapBuilder {
     final private int coilCount;
     final private int discreteInputCount;
     final private int holdingRegisterCount;
     final private int inputRegisterCount;
     final private int slaveIdSize;
 
-    public SimpleDataHolderBuilder(int size) {
+    public SimpleMemoryMapBuilder(int size) {
         coilCount = discreteInputCount = holdingRegisterCount = inputRegisterCount = slaveIdSize = size;
     }
 
-    public SimpleDataHolderBuilder(int slaveIdSize, int inputRegisterCount, int holdingRegisterCount, int discreteInputCount, int coilCount) {
+    public SimpleMemoryMapBuilder(int slaveIdSize, int inputRegisterCount, int holdingRegisterCount, int discreteInputCount, int coilCount) {
         this.slaveIdSize = slaveIdSize;
         this.inputRegisterCount = inputRegisterCount;
         this.holdingRegisterCount = holdingRegisterCount;
@@ -43,45 +43,45 @@ public class SimpleDataHolderBuilder extends DataHolderBuilder {
         this.coilCount = coilCount;
     }
 
-    public DataHolder getDataHolder() {
-        return dataHolder;
+    public MemoryMap getMemoryMap() {
+        return memoryMap;
     }
 
     @Override
     public void buildCoils() {
-        dataHolder.setCoils(new SimpleCoils(coilCount));
+        memoryMap.setCoils(new SimpleCoils(coilCount));
     }
 
     @Override
     public void buildDiscreteInputs() {
-        dataHolder.setDiscreteInputs(new SimpleCoils(discreteInputCount));
+        memoryMap.setDiscreteInputs(new SimpleCoils(discreteInputCount));
 
     }
 
     @Override
     public void buildHoldingRegisters() {
-        dataHolder.setHoldingRegisters(new SimpleHoldingRegisters(holdingRegisterCount));
+        memoryMap.setHoldingRegisters(new SimpleHoldingRegisters(holdingRegisterCount));
     }
 
     @Override
     public void buildInputRegisters() {
-        dataHolder.setInputRegisters(new SimpleHoldingRegisters(inputRegisterCount));
+        memoryMap.setInputRegisters(new SimpleHoldingRegisters(inputRegisterCount));
     }
 
     @Override
     public void buildSlaveId() {
-        dataHolder.setSlaveId(new SimpleSlaveId(slaveIdSize));
+        memoryMap.setSlaveId(new SimpleSlaveId(slaveIdSize));
     }
 
     @Override
     public void buildExceptionStatus() {
-        dataHolder.setExceptionStatus(new SimpleExceptionStatus(0));
+        memoryMap.setExceptionStatus(new SimpleExceptionStatus(0));
     }
 
     @Override
     public void buildFifoQueue() {
         try {
-            dataHolder.addFifoQueue(new SimpleFifoQueue(), 0);
+            memoryMap.addFifoQueue(new SimpleFifoQueue(), 0);
         } catch (IllegalDataAddressException e) {
             //it newer be thrown
             e.printStackTrace();
@@ -90,6 +90,6 @@ public class SimpleDataHolderBuilder extends DataHolderBuilder {
 
     @Override
     public void readDeviceIdentificationInterface() {
-        dataHolder.setReadDeviceIdentificationInterface(new ReadDeviceIdentificationInterface());
+        memoryMap.setReadDeviceIdentificationInterface(new ReadDeviceIdentificationInterface());
     }
 }

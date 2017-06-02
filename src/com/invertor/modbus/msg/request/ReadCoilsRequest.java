@@ -1,7 +1,7 @@
 package com.invertor.modbus.msg.request;
 
 import com.invertor.modbus.Modbus;
-import com.invertor.modbus.data.DataHolder;
+import com.invertor.modbus.data.MemoryMap;
 import com.invertor.modbus.exception.ModbusNumberException;
 import com.invertor.modbus.exception.ModbusProtocolException;
 import com.invertor.modbus.msg.base.AbstractMultipleRequest;
@@ -57,10 +57,10 @@ public class ReadCoilsRequest extends AbstractMultipleRequest {
     }
 
     @Override
-    public ModbusResponse process(DataHolder dataHolder) throws ModbusNumberException {
+    public ModbusResponse process(MemoryMap memoryMap) throws ModbusNumberException {
         ReadCoilsResponse response = new ReadCoilsResponse(getServerAddress());
         try {
-            boolean[] range = dataHolder.readCoilRange(getStartAddress(), getQuantity());
+            boolean[] range = memoryMap.readCoilRange(getStartAddress(), getQuantity());
             response.setCoils(range);
         } catch (ModbusProtocolException e) {
             response.setException();

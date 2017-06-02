@@ -2,7 +2,7 @@ package com.invertor.modbus.slave;
 
 import com.invertor.modbus.Modbus;
 import com.invertor.modbus.ModbusSlave;
-import com.invertor.modbus.data.DataHolder;
+import com.invertor.modbus.data.MemoryMap;
 import com.invertor.modbus.exception.ModbusIOException;
 import com.invertor.modbus.exception.ModbusNumberException;
 import com.invertor.modbus.msg.base.ModbusMessage;
@@ -42,11 +42,11 @@ class RequestHandlerTCP extends RequestHandler {
         setListening(true);
         try {
             do {
-                DataHolder dataHolder = getSlave().getDataHolder();
+                MemoryMap memoryMap = getSlave().getMemoryMap();
                 ModbusTransport transport = getConn().getTransport();
                 ModbusRequest request = (ModbusRequest) transport.readRequest();
                 if (request.getServerAddress() == getSlave().getServerAddress()) {
-                    ModbusMessage response = request.process(dataHolder);
+                    ModbusMessage response = request.process(memoryMap);
                     response.setTransactionId(request.getTransactionId());
                     transport.send(response);
                 }

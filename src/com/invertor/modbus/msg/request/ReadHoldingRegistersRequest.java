@@ -1,7 +1,7 @@
 package com.invertor.modbus.msg.request;
 
 import com.invertor.modbus.Modbus;
-import com.invertor.modbus.data.DataHolder;
+import com.invertor.modbus.data.MemoryMap;
 import com.invertor.modbus.exception.ModbusNumberException;
 import com.invertor.modbus.exception.ModbusProtocolException;
 import com.invertor.modbus.msg.base.AbstractMultipleRequest;
@@ -42,10 +42,10 @@ public class ReadHoldingRegistersRequest extends AbstractMultipleRequest {
     }
 
     @Override
-    public ModbusResponse process(DataHolder dataHolder) throws ModbusNumberException {
+    public ModbusResponse process(MemoryMap memoryMap) throws ModbusNumberException {
         ReadHoldingRegistersResponse response = new ReadHoldingRegistersResponse(getServerAddress());
         try {
-            int[] range = dataHolder.readHoldingRegisterRange(getStartAddress(), getQuantity());
+            int[] range = memoryMap.readHoldingRegisterRange(getStartAddress(), getQuantity());
             response.setBuffer(range);
         } catch (ModbusProtocolException e) {
             response.setException();

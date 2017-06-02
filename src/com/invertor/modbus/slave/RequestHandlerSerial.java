@@ -3,7 +3,7 @@ package com.invertor.modbus.slave;
 import com.invertor.modbus.Modbus;
 import com.invertor.modbus.ModbusSlave;
 import com.invertor.modbus.data.CommStatus;
-import com.invertor.modbus.data.DataHolder;
+import com.invertor.modbus.data.MemoryMap;
 import com.invertor.modbus.data.comm.ModbusCommEventSend;
 import com.invertor.modbus.exception.ModbusChecksumException;
 import com.invertor.modbus.exception.ModbusIOException;
@@ -45,8 +45,8 @@ class RequestHandlerSerial extends RequestHandler {
     public void run() {
         setListening(true);
         do {
-            DataHolder dataHolder = getSlave().getDataHolder();
-            CommStatus commStatus = dataHolder.getCommStatus();
+            MemoryMap memoryMap = getSlave().getMemoryMap();
+            CommStatus commStatus = memoryMap.getCommStatus();
             ModbusTransport transport = getConn().getTransport();
             try {
                 ModbusRequest request = (ModbusRequest) transport.readRequest();
@@ -58,7 +58,7 @@ class RequestHandlerSerial extends RequestHandler {
                 }
                 if (request.getServerAddress() == getSlave().getServerAddress()) {
                     try {
-                        ModbusResponse response = request.process(dataHolder);
+                        ModbusResponse response = request.process(memoryMap);
                         commStatus.incSlaveMessageCounter();
                         if (response.isException()) {
                             commStatus.addEvent(ModbusCommEventSend.createExceptionSentRead());

@@ -1,7 +1,7 @@
 package com.invertor.modbus.msg.request;
 
 import com.invertor.modbus.Modbus;
-import com.invertor.modbus.data.DataHolder;
+import com.invertor.modbus.data.MemoryMap;
 import com.invertor.modbus.exception.ModbusNumberException;
 import com.invertor.modbus.exception.ModbusProtocolException;
 import com.invertor.modbus.msg.base.ModbusFileRecord;
@@ -88,11 +88,11 @@ final public class ReadFileRecordRequest extends ModbusRequest {
     }
 
     @Override
-    public ModbusResponse process(DataHolder dataHolder) throws ModbusNumberException {
+    public ModbusResponse process(MemoryMap memoryMap) throws ModbusNumberException {
         ReadFileRecordResponse response = new ReadFileRecordResponse(getServerAddress());
         try {
             for (ModbusFileRecord r : records) {
-                r.writeRegisters(dataHolder.readFileRecord(r.getFileNumber(), r.getRecordNumber(), r.getRecordLength()));
+                r.writeRegisters(memoryMap.readFileRecord(r.getFileNumber(), r.getRecordNumber(), r.getRecordLength()));
             }
             response.setFileRecords(records);
         } catch (ModbusProtocolException e) {
