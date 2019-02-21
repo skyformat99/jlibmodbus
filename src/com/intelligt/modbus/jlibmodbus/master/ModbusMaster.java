@@ -126,36 +126,41 @@ abstract public class ModbusMaster implements FrameEventListenerList {
      * @see com.intelligt.modbus.jlibmodbus.msg.request
      * @see com.intelligt.modbus.jlibmodbus.msg.request
      */
-    public ModbusResponse processRequest(ModbusRequest request) throws ModbusProtocolException, ModbusIOException {
-        sendRequest(request);
-        if (request.getServerAddress() != Modbus.BROADCAST_ID) {
-            do {
-                try {
-                    ModbusResponse msg = (ModbusResponse) readResponse(request);
-                    request.validateResponse(msg);
-                /*
-                 * if you have received an ACKNOWLEDGE,
-                 * it means that operation is in processing and you should be waiting for the answer
-                 */
-                    if (msg.getModbusExceptionCode() != ModbusExceptionCode.ACKNOWLEDGE) {
-                        if (msg.isException())
-                            throw new ModbusProtocolException(msg.getModbusExceptionCode());
-                        return msg;
+    synchronized public ModbusResponse processRequest(ModbusRequest request) throws ModbusProtocolException, ModbusIOException {
+        try {
+            sendRequest(request);
+            if (request.getServerAddress() != Modbus.BROADCAST_ID) {
+                do {
+                    try {
+                        ModbusResponse msg = (ModbusResponse) readResponse(request);
+                        request.validateResponse(msg);
+                        /*
+                         * if you have received an ACKNOWLEDGE,
+                         * it means that operation is in processing and you should be waiting for the answer
+                         */
+                        if (msg.getModbusExceptionCode() != ModbusExceptionCode.ACKNOWLEDGE) {
+                            if (msg.isException())
+                                throw new ModbusProtocolException(msg.getModbusExceptionCode());
+                            return msg;
+                        }
+                    } catch (ModbusNumberException mne) {
+                        Modbus.log().warning(mne.getLocalizedMessage());
                     }
-                } catch (ModbusNumberException mne) {
-                    Modbus.log().warning(mne.getLocalizedMessage());
-                }
-            } while (System.currentTimeMillis() - requestTime < getConnection().getReadTimeout());
-        /*
-         * throw an exception if there is a response timeout
-         */
-            throw new ModbusIOException("Response timeout.");
-        } else {
+                } while (System.currentTimeMillis() - requestTime < getConnection().getReadTimeout());
+                /*
+                 * throw an exception if there is a response timeout
+                 */
+                throw new ModbusIOException("Response timeout.");
+            } else {
             /*
              return because slaves do not respond broadcast requests
              */
-            broadcastResponse.setFunction(request.getFunction());
-            return broadcastResponse;
+                broadcastResponse.setFunction(request.getFunction());
+                return broadcastResponse;
+            }
+        } catch (ModbusIOException mioe) {
+            disconnect();
+            throw mioe;
         }
     }
 
@@ -187,7 +192,7 @@ abstract public class ModbusMaster implements FrameEventListenerList {
      * @throws ModbusNumberException   if response is invalid
      * @throws ModbusIOException       if remote slave is unavailable
      */
-    final synchronized public int[] readHoldingRegisters(int serverAddress, int startAddress, int quantity) throws
+    final public int[] readHoldingRegisters(int serverAddress, int startAddress, int quantity) throws
             ModbusProtocolException, ModbusNumberException, ModbusIOException {
         ModbusRequest request = ModbusRequestBuilder.getInstance().buildReadHoldingRegisters(serverAddress, startAddress, quantity);
         ReadHoldingRegistersResponse response = (ReadHoldingRegistersResponse) processRequest(request);
@@ -208,7 +213,7 @@ abstract public class ModbusMaster implements FrameEventListenerList {
      * @throws ModbusNumberException   if response is invalid
      * @throws ModbusIOException       if remote slave is unavailable
      */
-    final synchronized public int[] readInputRegisters(int serverAddress, int startAddress, int quantity) throws
+    final public int[] readInputRegisters(int serverAddress, int startAddress, int quantity) throws
             ModbusProtocolException, ModbusNumberException, ModbusIOException {
         ModbusRequest request = ModbusRequestBuilder.getInstance().buildReadInputRegisters(serverAddress, startAddress, quantity);
         ReadHoldingRegistersResponse response = (ReadInputRegistersResponse) processRequest(request);
@@ -254,7 +259,7 @@ abstract public class ModbusMaster implements FrameEventListenerList {
      * @throws ModbusNumberException   if response is invalid
      * @throws ModbusIOException       if remote slave is unavailable
      */
-    final synchronized public boolean[] readDiscreteInputs(int serverAddress, int startAddress, int quantity) throws
+    final public boolean[] readDiscreteInputs(int serverAddress, int startAddress, int quantity) throws
             ModbusProtocolException, ModbusNumberException, ModbusIOException {
         ModbusRequest request = ModbusRequestBuilder.getInstance().buildReadDiscreteInputs(serverAddress, startAddress, quantity);
         ReadDiscreteInputsResponse response = (ReadDiscreteInputsResponse) processRequest(request);
@@ -275,7 +280,7 @@ abstract public class ModbusMaster implements FrameEventListenerList {
      * @throws ModbusNumberException   if response is invalid
      * @throws ModbusIOException       if remote slave is unavailable
      */
-    final synchronized public void writeSingleCoil(int serverAddress, int startAddress, boolean flag) throws
+    final public void writeSingleCoil(int serverAddress, int startAddress, boolean flag) throws
             ModbusProtocolException, ModbusNumberException, ModbusIOException {
         processRequest(ModbusRequestBuilder.getInstance().buildWriteSingleCoil(serverAddress, startAddress, flag));
     }
@@ -292,7 +297,7 @@ abstract public class ModbusMaster implements FrameEventListenerList {
      * @throws ModbusNumberException   if response is invalid
      * @throws ModbusIOException       if remote slave is unavailable
      */
-    final synchronized public void writeSingleRegister(int serverAddress, int startAddress, int register) throws
+    final public void writeSingleRegister(int serverAddress, int startAddress, int register) throws
             ModbusProtocolException, ModbusNumberException, ModbusIOException {
         processRequest(ModbusRequestBuilder.getInstance().buildWriteSingleRegister(serverAddress, startAddress, register));
     }
@@ -312,7 +317,7 @@ abstract public class ModbusMaster implements FrameEventListenerList {
      * @throws ModbusNumberException   if response is invalid
      * @throws ModbusIOException       if remote slave is unavailable
      */
-    final synchronized public void writeMultipleCoils(int serverAddress, int startAddress, boolean[] coils) throws
+    final public void writeMultipleCoils(int serverAddress, int startAddress, boolean[] coils) throws
             ModbusProtocolException, ModbusNumberException, ModbusIOException {
         processRequest(ModbusRequestBuilder.getInstance().buildWriteMultipleCoils(serverAddress, startAddress, coils));
     }
@@ -330,7 +335,7 @@ abstract public class ModbusMaster implements FrameEventListenerList {
      * @throws ModbusNumberException   if response is invalid
      * @throws ModbusIOException       if remote slave is unavailable
      */
-    final synchronized public void writeMultipleRegisters(int serverAddress, int startAddress, int[] registers) throws
+    final public void writeMultipleRegisters(int serverAddress, int startAddress, int[] registers) throws
             ModbusProtocolException, ModbusNumberException, ModbusIOException {
         processRequest(ModbusRequestBuilder.getInstance().buildWriteMultipleRegisters(serverAddress, startAddress, registers));
     }
@@ -353,7 +358,7 @@ abstract public class ModbusMaster implements FrameEventListenerList {
      * @throws ModbusNumberException   if response is invalid
      * @throws ModbusIOException       if remote slave is unavailable
      */
-    final synchronized public int[] readWriteMultipleRegisters(int serverAddress, int readAddress, int readQuantity, int writeAddress, int[] registers) throws
+    final public int[] readWriteMultipleRegisters(int serverAddress, int readAddress, int readQuantity, int writeAddress, int[] registers) throws
             ModbusProtocolException, ModbusNumberException, ModbusIOException {
         ModbusRequest request = ModbusRequestBuilder.getInstance().buildReadWriteMultipleRegisters(serverAddress, readAddress, readQuantity, writeAddress, registers);
         ReadWriteMultipleRegistersResponse response = (ReadWriteMultipleRegistersResponse) processRequest(request);
@@ -375,7 +380,7 @@ abstract public class ModbusMaster implements FrameEventListenerList {
      * @throws ModbusNumberException   if response is invalid
      * @throws ModbusIOException       if remote slave is unavailable
      */
-    final synchronized public int[] readFifoQueue(int serverAddress, int fifoPointerAddress) throws
+    final public int[] readFifoQueue(int serverAddress, int fifoPointerAddress) throws
             ModbusProtocolException, ModbusNumberException, ModbusIOException {
         ModbusRequest request = ModbusRequestBuilder.getInstance().buildReadFifoQueue(serverAddress, fifoPointerAddress);
         ReadFifoQueueResponse response = (ReadFifoQueueResponse) processRequest(request);
@@ -395,7 +400,7 @@ abstract public class ModbusMaster implements FrameEventListenerList {
      * @throws ModbusNumberException   if response is invalid
      * @throws ModbusIOException       if remote slave is unavailable
      */
-    final synchronized public ModbusFileRecord[] readFileRecord(int serverAddress, ModbusFileRecord[] records) throws
+    final public ModbusFileRecord[] readFileRecord(int serverAddress, ModbusFileRecord[] records) throws
             ModbusProtocolException, ModbusNumberException, ModbusIOException {
         ModbusRequest request = ModbusRequestBuilder.getInstance().buildReadFileRecord(serverAddress, records);
         ReadFileRecordResponse response = (ReadFileRecordResponse) processRequest(request);
@@ -416,7 +421,7 @@ abstract public class ModbusMaster implements FrameEventListenerList {
      * @throws ModbusNumberException   if response is invalid
      * @throws ModbusIOException       if remote slave is unavailable
      */
-    final synchronized public void writeFileRecord(int serverAddress, ModbusFileRecord record) throws
+    final public void writeFileRecord(int serverAddress, ModbusFileRecord record) throws
             ModbusProtocolException, ModbusNumberException, ModbusIOException {
         processRequest(ModbusRequestBuilder.getInstance().buildWriteFileRecord(serverAddress, record));
     }
@@ -454,7 +459,7 @@ abstract public class ModbusMaster implements FrameEventListenerList {
      * @throws ModbusNumberException   if response is invalid
      * @throws ModbusIOException       if remote slave is unavailable
      */
-    final synchronized public void maskWriteRegister(int serverAddress, int startAddress, int and, int or) throws
+    final public void maskWriteRegister(int serverAddress, int startAddress, int and, int or) throws
             ModbusProtocolException, ModbusNumberException, ModbusIOException {
         processRequest(ModbusRequestBuilder.getInstance().buildMaskWriteRegister(serverAddress, startAddress, and, or));
     }

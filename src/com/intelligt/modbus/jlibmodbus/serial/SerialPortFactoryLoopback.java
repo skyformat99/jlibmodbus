@@ -29,26 +29,21 @@ import java.util.List;
  * @author Kevin Kieffer
  * @since 1.9.0
  */
-public class SerialPortFactoryLoopback implements SerialPortAbstractFactory {
+public class SerialPortFactoryLoopback extends SerialPortAbstractFactory {
 
-    private final boolean isMaster;
+    final private boolean isMaster;
 
     public SerialPortFactoryLoopback(boolean isMaster) {
         this.isMaster = isMaster;
     }
 
     @Override
-    public SerialPort createSerial(SerialParameters sp) throws SerialPortException {
+    public SerialPort createSerialImpl(SerialParameters sp) throws SerialPortException {
         return new SerialPortLoopback(sp, isMaster);
     }
 
     @Override
-    public List<String> getPortIdentifiers() {
+    public List<String> getPortIdentifiersImpl() {
         return Arrays.asList(new String[0]);
-    }
-
-    @Override
-    public String getVersion() {
-        return "information about version is unavailable.";
     }
 }

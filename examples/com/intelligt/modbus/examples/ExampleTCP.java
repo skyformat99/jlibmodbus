@@ -46,8 +46,8 @@ public class ExampleTCP {
         try {
             Modbus.setLogLevel(Modbus.LogLevel.LEVEL_DEBUG);
             TcpParameters tcpParameters = new TcpParameters();
-            //listening on all interfaces
-            tcpParameters.setHost(InetAddress.getByName("0.0.0.0"));
+            //listening on localhost
+            tcpParameters.setHost(InetAddress.getLocalHost());
             tcpParameters.setPort(Modbus.TCP_PORT);
             tcpParameters.setKeepAlive(true);
 
@@ -82,7 +82,7 @@ public class ExampleTCP {
 
                 @Override
                 public void clientDisconnected(TcpClientInfo info) {
-                    System.out.println("Client disonnected " + info.getTcpParameters().getHost());
+                    System.out.println("Client disconnected " + info.getTcpParameters().getHost());
                 }
             };
             slave.addObserver(o);

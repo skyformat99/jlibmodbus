@@ -1,6 +1,8 @@
 package com.intelligt.modbus.jlibmodbus.serial;
 
-import java.util.ArrayList;
+import com.google.android.things.AndroidThings;
+import com.google.android.things.pio.PeripheralManager;
+
 import java.util.List;
 
 /*
@@ -25,23 +27,28 @@ import java.util.List;
  * Authors: Vladislav Y. Kochedykov, software engineer.
  * email: vladislav.kochedykov@gmail.com
  */
-public class SerialPortFactoryJSerialComm extends SerialPortAbstractFactory {
+public class SerialPortFactoryAT extends SerialPortAbstractFactory {
 
-    public SerialPortFactoryJSerialComm() {
+    public SerialPortFactoryAT() {
     }
 
     @Override
     public SerialPort createSerialImpl(SerialParameters sp) {
-        return new SerialPortJSerialComm(sp);
+        return new SerialPortAT(sp);
     }
 
     @Override
     public List<String> getPortIdentifiersImpl() {
-        com.fazecast.jSerialComm.SerialPort[] ports = com.fazecast.jSerialComm.SerialPort.getCommPorts();
-        List<String> portIdentifiers = new ArrayList<String>(ports.length);
-        for (int i = 0; i < ports.length; i++) {
-            portIdentifiers.add(ports[i].getSystemPortName());
+        final PeripheralManager pm = PeripheralManager.getInstance();
+        return pm.getUartDeviceList();
+    }
+
+    @Override
+    public String getVersion() {
+        try {
+            return AndroidThings.RELEASE;
+        } catch (Exception e) {
+            return super.getVersion();
         }
-        return portIdentifiers;
     }
 }
